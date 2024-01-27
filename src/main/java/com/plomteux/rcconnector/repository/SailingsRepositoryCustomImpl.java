@@ -3,7 +3,6 @@ package com.plomteux.rcconnector.repository;
 import com.plomteux.rcconnector.entity.RoomType;
 import com.plomteux.rcconnector.entity.SailingsEntity;
 import com.plomteux.rcconnector.mapper.CruiseOverViewMapper;
-import com.plomteux.rcconnector.model.Cruise;
 import com.plomteux.rcconnector.model.CruiseOverView;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -80,8 +79,8 @@ public class SailingsRepositoryCustomImpl implements SailingsRepositoryCustom {
         return entityManager.createQuery(cq).getResultList().stream()
                 .map(result -> {
                     SailingsEntity sailings = result.get(0, SailingsEntity.class);
-                    BigDecimal oldPrice = result.get(1, BigDecimal.class);
-                    return cruiseOverViewMapper.toCruiseOverView(sailings, oldPrice);
+                    BigDecimal priceDrop = result.get(1, BigDecimal.class);
+                    return cruiseOverViewMapper.toCruiseOverView(sailings, priceDrop);
                 })
                 .toList();
     }

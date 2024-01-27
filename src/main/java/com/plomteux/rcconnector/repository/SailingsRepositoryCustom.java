@@ -1,6 +1,5 @@
 package com.plomteux.rcconnector.repository;
 
-import com.plomteux.rcconnector.model.Cruise;
 import com.plomteux.rcconnector.model.CruiseOverView;
 
 import java.math.BigDecimal;

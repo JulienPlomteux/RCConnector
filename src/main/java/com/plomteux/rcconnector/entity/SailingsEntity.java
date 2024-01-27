@@ -21,7 +21,6 @@ public class SailingsEntity {
     private BigDecimal inside;
     private BigDecimal oceanView;
     private BigDecimal balcony;
-    private BigDecimal oldPrice;
     private String bookingLink;
 
     @ManyToOne(fetch = FetchType.LAZY)

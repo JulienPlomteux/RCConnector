@@ -3,7 +3,6 @@ package com.plomteux.rcconnector.mapper;
 import com.plomteux.rcconnector.entity.CruiseDetailsEntity;
 import com.plomteux.rcconnector.entity.DestinationCodeEntity;
 import com.plomteux.rcconnector.entity.SailingsEntity;
-import com.plomteux.rcconnector.model.Cruise;
 import com.plomteux.rcconnector.model.CruiseOverView;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
@@ -19,8 +18,8 @@ public interface CruiseOverViewMapper {
     CruiseOverView toCruiseOverView(SailingsEntity sailingsEntity, BigDecimal oldPrice);
 
     @AfterMapping
-    default void addedMapping(SailingsEntity sailingsEntity, BigDecimal oldPrice, @MappingTarget CruiseOverView cruiseOverView) {
-        cruiseOverView.setOldPrice(oldPrice);
+    default void addedMapping(SailingsEntity sailingsEntity, BigDecimal priceDrop, @MappingTarget CruiseOverView cruiseOverView) {
+        cruiseOverView.setPriceDrop(priceDrop);
         CruiseDetailsEntity cruiseDetailsEntity = sailingsEntity.getCruiseDetailsEntity();
         cruiseOverView.setPortsOfCall(
                 cruiseDetailsEntity.getDestinationsEntities().stream()
@@ -29,7 +28,6 @@ public interface CruiseOverViewMapper {
         );
         cruiseOverView.setDuration(cruiseDetailsEntity.getDuration());
         cruiseOverView.setEmbarkationPort(cruiseDetailsEntity.getEmbarkationPortCode());
-
     }
 
 
