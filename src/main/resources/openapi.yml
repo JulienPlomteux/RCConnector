@@ -1,0 +1,211 @@
+openapi: 3.0.0
+info:
+  title: Cruise API
+  description: API for retrieving cruise details
+  version: 1.0.0
+paths:
+  /cruise-details:
+    get:
+      summary: Get Cruise Details
+      tags:
+        - r-c-controller
+      operationId: getCruiseDetails
+      description: Returns the details of a specific cruise
+      responses:
+        '204':
+          description: Successfully retrieved the cruise details
+        '400':
+          description: Bad Request - Invalid request parameter
+        '404':
+          description: Not Found - Cruise not found
+  /daily-price-drops:
+    get:
+      summary: Return Daily Price Drops
+      tags:
+        - r-c-controller
+      operationId: getSailingsPriceDrops
+      parameters:
+        - $ref: '#/components/parameters/fromDate'
+        - $ref: '#/components/parameters/toDate'
+        - $ref: '#/components/parameters/percentage'
+        - $ref: '#/components/parameters/roomType'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CruiseOverView'
+#---------------------------------------------
+components:
+  parameters:
+    fromDate:
+      name: fromDate
+      in: query
+      description: The from date parameter (e.g., 2023-10-08, default is yesterday)
+      schema:
+        type: string
+        format: date
+
+    percentage:
+      name: percentage
+      in: query
+      schema:
+        type: number
+
+    toDate:
+      name: toDate
+      in: query
+      description: The to date parameter (e.g., 2023-10-08, default is today)
+      schema:
+        type: string
+        format: date
+
+    roomType:
+      name: roomType
+      in: query
+      required: false
+      description: The room type (e.g., INSIDE, OCEANVIEW, BALCONY)
+      schema:
+        type: string
+        enum:
+          - INSIDE
+          - OCEANVIEW
+          - BALCONY
+
+  schemas:
+    CruiseSearchResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            cruiseSearch:
+              type: object
+              properties:
+                results:
+                  type: object
+                  properties:
+                    cruises:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/Cruise'
+                    total:
+                      type: integer
+    Cruise:
+      type: object
+      properties:
+        sailings:
+          type: array
+          items:
+            $ref: '#/components/schemas/Sailings'
+        id:
+          type: string
+        productViewLink:
+          type: string
+        masterSailing:
+          type: object
+          properties:
+            itinerary:
+              type: object
+              properties:
+                name:
+                  type: string
+                code:
+                  type: string
+                days:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      number:
+                        type: integer
+                      ports:
+                        type: array
+                        items:
+                          properties:
+                            port:
+                              type: object
+                              properties:
+                                name:
+                                  type: string
+                                code:
+                                  type: string
+                departurePort:
+                  type: object
+                  properties:
+                    code:
+                      type: string
+                    name:
+                      type: string
+                    region:
+                      type: string
+                destination:
+                  type: object
+                  properties:
+                    code:
+                      type: string
+                    name:
+                      type: string
+                totalNights:
+                  type: integer
+    Sailings:
+      type: object
+      properties:
+        oldPrice:
+          type: number
+        bookingLink:
+          type: string
+        id:
+          type: string
+        startDate:
+          type: string
+        endDate:
+          type: string
+        taxesAndFees:
+          type: object
+          properties:
+            value:
+              type: number
+        stateroomClassPricing:
+          type: array
+          items:
+            type: object
+            properties:
+              price:
+                type: object
+                properties:
+                  value:
+                    type: number
+              stateroomClass:
+                type: object
+                properties:
+                  id:
+                    type: string
+    CruiseOverView:
+      type: object
+      properties:
+        oldPrice:
+          type: number
+        inside:
+          type: number
+        balcony:
+          type: number
+        oceanView:
+          type: number
+        duration:
+          type: number
+        departureDate:
+          type: string
+        returnDate:
+          type: string
+        embarkationPort:
+          type: string
+        portsOfCall:
+          type: array
+          items:
+            type: string
+        productViewLink:
+          type: string
