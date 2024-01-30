@@ -4,6 +4,7 @@ import com.plomteux.rcconnector.model.CruiseOverView;
 import com.plomteux.rcconnector.repository.SailingsRepository;
 import com.plomteux.rcconnector.service.RCService;
 import lombok.AllArgsConstructor;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -53,6 +54,30 @@ public class RCControllerApiImpl implements RCControllerApi {
                 percentage,
                 roomType
         );
+        return ResponseEntity.ok(results);
+    }
+
+    @Override
+    public ResponseEntity<List<CruiseOverView>> findCruise(
+            @RequestParam("departureDate") LocalDate departureDate,
+            @RequestParam("returnDate") LocalDate returnDate,
+            @RequestParam("priceUpTo") BigDecimal priceUpTo,
+            @RequestParam("priceFrom") BigDecimal priceFrom,
+            @RequestParam("daysAtSeaMin") BigDecimal daysAtSeaMin,
+            @RequestParam("daysAtSeaMax") BigDecimal daysAtSeaMax,
+            @RequestParam("departurePort") String departurePort,
+            @RequestParam("destinationCode") String destinationCode) {
+        log.debug("Received findCruise request");
+        if (departureDate.isAfter(returnDate)) {
+            throw new IllegalArgumentException("Departure date cannot be after return date");
+        }
+        if (priceUpTo != null && priceFrom != null && priceUpTo.compareTo(priceFrom) < 0) {
+            throw new IllegalArgumentException("Price up to cannot be less than price from");
+        }
+        if (daysAtSeaMax != null && daysAtSeaMin != null && daysAtSeaMax.compareTo(daysAtSeaMin) < 0) {
+            throw new IllegalArgumentException("Days at sea max cannot be less than days at sea min");
+        }
+        List<CruiseOverView> results = sailingsRepository.findCruise(departureDate, returnDate, priceUpTo, priceFrom, daysAtSeaMin, daysAtSeaMax, departurePort, destinationCode);
         return ResponseEntity.ok(results);
     }
 }

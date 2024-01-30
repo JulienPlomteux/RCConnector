@@ -28,8 +28,7 @@ public interface CruiseOverViewMapper {
         );
         cruiseOverView.setDuration(cruiseDetailsEntity.getDuration());
         cruiseOverView.setEmbarkationPort(cruiseDetailsEntity.getEmbarkationPortCode());
+        cruiseOverView.setDestination(cruiseDetailsEntity.getDestination());
     }
-
-
 
 }

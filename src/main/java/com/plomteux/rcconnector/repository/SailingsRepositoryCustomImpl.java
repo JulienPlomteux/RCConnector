@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Repository
@@ -82,6 +83,45 @@ public class SailingsRepositoryCustomImpl implements SailingsRepositoryCustom {
                     BigDecimal priceDrop = result.get(1, BigDecimal.class);
                     return cruiseOverViewMapper.toCruiseOverView(sailings, priceDrop);
                 })
+                .toList();
+    }
+
+    @Override
+    public List<CruiseOverView> findCruise(LocalDate departureDate, LocalDate returnDate, BigDecimal priceUpTo, BigDecimal priceFrom, BigDecimal daysAtSeaMin, BigDecimal daysAtSeaMax, String departurePort, String destinationCode) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<SailingsEntity> cq = cb.createQuery(SailingsEntity.class);
+
+        Root<SailingsEntity> sailings = cq.from(SailingsEntity.class);
+        List<Predicate> predicates = new ArrayList<>();
+
+        predicates.add(cb.greaterThanOrEqualTo(sailings.get(DEPARTURE_DATE), departureDate));
+        predicates.add(cb.lessThanOrEqualTo(sailings.get(RETURN_DATE), returnDate));
+        predicates.add(cb.equal(sailings.get(PUBLISHED_DATE), LocalDate.now()));
+
+        if (destinationCode != null) {
+            predicates.add(cb.equal(sailings.get(CRUISE_DETAILS_ENTITY).get("destination"), destinationCode));
+        }
+        if (priceFrom != null) {
+            predicates.add(cb.greaterThanOrEqualTo(sailings.get(INSIDE), priceFrom));
+        }
+        if (priceUpTo != null) {
+            predicates.add(cb.lessThanOrEqualTo(sailings.get(INSIDE), priceUpTo));
+        }
+        if (departurePort != null) {
+            predicates.add(cb.equal(sailings.get(CRUISE_DETAILS_ENTITY).get(EMBARKATION_PORT_CODE), departurePort));
+        }
+        if (daysAtSeaMin != null) {
+            predicates.add(cb.greaterThanOrEqualTo(sailings.get(CRUISE_DETAILS_ENTITY).get(DURATION), daysAtSeaMin));
+        }
+        if (daysAtSeaMax != null) {
+            predicates.add(cb.lessThanOrEqualTo(sailings.get(CRUISE_DETAILS_ENTITY).get(DURATION), daysAtSeaMax));
+        }
+
+        cq.where(predicates.toArray(new Predicate[0]));
+        cq.orderBy(cb.asc(sailings.get(INSIDE)));
+
+        return entityManager.createQuery(cq).getResultList().stream()
+                .map(result -> cruiseOverViewMapper.toCruiseOverView(result, BigDecimal.ZERO))
                 .toList();
     }
 }

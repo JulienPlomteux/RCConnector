@@ -11,6 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
+
 @Component
 @Mapper(componentModel = "spring")
 public interface SailingsMapper {
@@ -23,19 +25,17 @@ public interface SailingsMapper {
     @Mapping(target = "bookingLink", ignore = true)
     SailingsEntity toSailingsEntity(Sailings sailings);
 
-//    @Mapping(target = "pricing", ignore = true)
-//    Sailings toSailings(SailingsEntity sailingsEntity);
-
     @BeforeMapping
     default void mapStateroomClassPricing(Sailings sailings, @MappingTarget SailingsEntity sailingsEntity) {
 
         for (SailingsStateroomClassPricingInner pricing : sailings.getStateroomClassPricing()) {
             String roomType = pricing.getStateroomClass().getId();
+            BigDecimal taxesAndFees = sailings.getTaxesAndFees().getValue();
             try {
                 switch (roomType) {
-                    case "INTERIOR" -> sailingsEntity.setInside(pricing.getPrice().getValue());
-                    case "OUTSIDE" -> sailingsEntity.setOceanView(pricing.getPrice().getValue());
-                    case "BALCONY" -> sailingsEntity.setBalcony(pricing.getPrice().getValue());
+                    case "INTERIOR" -> sailingsEntity.setInside(pricing.getPrice().getValue().add(taxesAndFees));
+                    case "OUTSIDE" -> sailingsEntity.setOceanView(pricing.getPrice().getValue().add(taxesAndFees));
+                    case "BALCONY" -> sailingsEntity.setBalcony(pricing.getPrice().getValue().add(taxesAndFees));
                 }
             } catch (NullPointerException e) {
                 log.warn(String.format("Sailing: %s does not have a price for room: %s", sailings.getId(), roomType));

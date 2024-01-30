@@ -38,9 +38,116 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/CruiseOverView'
+  /find-cruise:
+    get:
+      summary: Return cruises
+      tags:
+        - r-c-controller
+      operationId: findCruise
+      parameters:
+        - $ref: '#/components/parameters/departureDate'
+        - $ref: '#/components/parameters/returnDate'
+        - $ref: '#/components/parameters/priceUpTo'
+        - $ref: '#/components/parameters/priceFrom'
+        - $ref: '#/components/parameters/daysAtSeaMin'
+        - $ref: '#/components/parameters/daysAtSeaMax'
+        - $ref: '#/components/parameters/departurePort'
+        - $ref: '#/components/parameters/destinationCode'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CruiseOverView'
 #---------------------------------------------
 components:
   parameters:
+    destinationCode:
+      name: destinationCode
+      in: query
+      description: The destination code parameter
+      schema:
+        type: string
+        enum:
+          - Caribbean
+          - Panama Canal
+          - Bermuda
+          - Australia & New Zealand
+          - Pacific Northwest
+          - Bahamas
+          - Europe
+          - Transatlantic
+          - Hawaii
+          - Canada & New England
+          - South Pacific
+          - Asia
+          - Mexico
+          - Arabian Gulf
+          - Transpacific
+          - Alaska
+    departureDate:
+      name: departureDate
+      in: query
+      required: true
+      description: The departure date parameter (e.g., 2023-10-08)
+      schema:
+        type: string
+        format: date
+
+    returnDate:
+      name: returnDate
+      in: query
+      required: true
+      description: The return date parameter (e.g., 2023-10-08)
+      schema:
+        type: string
+        format: date
+
+    daysAtSeaMin:
+      name: daysAtSeaMin
+      in: query
+      description: The minimum days at sea
+      schema:
+        type: number
+
+    daysAtSeaMax:
+      name: daysAtSeaMax
+      in: query
+      description: The maximum days at sea
+      schema:
+        type: number
+
+    duration:
+      name: duration
+      in: query
+      description: The duration of the cruise
+      schema:
+        type: number
+
+    priceUpTo:
+      name: priceUpTo
+      in: query
+      description: The max price of the cruise
+      schema:
+        type: number
+
+    priceFrom:
+      name: priceFrom
+      in: query
+      description: The min price of the cruise
+      schema:
+        type: number
+
+    departurePort:
+      name: departurePort
+      in: query
+      description: The destination code parameter
+      schema:
+        type: string
+
     fromDate:
       name: fromDate
       in: query
@@ -202,6 +309,8 @@ components:
         returnDate:
           type: string
         embarkationPort:
+          type: string
+        destination:
           type: string
         portsOfCall:
           type: array

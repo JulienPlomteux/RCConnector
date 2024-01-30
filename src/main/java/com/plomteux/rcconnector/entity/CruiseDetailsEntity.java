@@ -17,6 +17,7 @@ public class CruiseDetailsEntity {
     private String code;
     private BigDecimal duration;
     private String embarkationPortCode;
+    private String destination;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "cruiseDetailsEntity")
     private List<SailingsEntity> sailingsEntities;
