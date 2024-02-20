@@ -1,5 +1,6 @@
 package com.plomteux.rcconnector.mapper;
 
+import com.plomteux.rcconnector.configuration.AppConfig;
 import com.plomteux.rcconnector.entity.SailingsEntity;
 import com.plomteux.rcconnector.model.Sailings;
 import com.plomteux.rcconnector.model.SailingsStateroomClassPricingInner;
@@ -42,7 +43,7 @@ public interface SailingsMapper {
 
             }
         }
-        sailingsEntity.setBookingLink("https://www.royalcaribbean.com" + sailings.getBookingLink());
+        sailingsEntity.setBookingLink(AppConfig.getBaseUrl()  + sailings.getBookingLink());
     }
 
 }
