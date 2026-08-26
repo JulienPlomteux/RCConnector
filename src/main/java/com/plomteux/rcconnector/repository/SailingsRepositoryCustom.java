@@ -8,4 +8,6 @@ import java.util.List;
 
 public interface SailingsRepositoryCustom {
     List<CruiseOverView> getSailingsPriceDrops(LocalDate from, LocalDate to, BigDecimal percentage, String roomType);
+
+    List<CruiseOverView> findCruise(LocalDate departureDate, LocalDate returnDate, BigDecimal priceUpTo, BigDecimal priceFrom, BigDecimal daysAtSeaMin, BigDecimal daysAtSeaMax, String departurePort, String destinationCode);
 }

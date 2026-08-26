@@ -18,6 +18,7 @@ public interface CruiseDetailsMapper {
     @Mapping(target = "code", source = "id")
     @Mapping(target = "duration", source = "masterSailing.itinerary.totalNights")
     @Mapping(target = "embarkationPortCode", source = "masterSailing.itinerary.departurePort.name")
+    @Mapping(target = "destination", source = "masterSailing.itinerary.destination.name")
     @Mapping(target = "destinationsEntities", source = "masterSailing.itinerary.days", qualifiedByName = "mapPortsToDestinations")
     @Mapping(target = "sailingsEntities", source = "sailings")
     CruiseDetailsEntity toCruiseDetailsEntity(Cruise cruiseDetails);
